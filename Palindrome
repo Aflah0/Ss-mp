@@ -1,0 +1,64 @@
+model small
+printmsg macro msg
+push ax
+push dx
+LEA dx,msg
+mov ah,09h
+int 21h
+pop dx
+pop ax
+endm
+.data
+msg1 db 0ah,0dh,"enter
+the palindrome $"
+msg2 db 0ah,0dh,"it ia a
+palindrome $"
+msg3 db 0ah,0dh,"it is
+not a palindrome $"
+msg4 db 0ah,0dh," $"
+msg5 db 0ah,0dh,"length
+is $"
+buffer db 10
+db 12 dup('$')
+len db 00
+.code
+mov ax,@data
+mov ds,ax
+printmsg msg1
+LEA dx,buffer
+mov ah,0ah
+int 21h
+printmsg msg4
+mov si,02
+LEA dx,buffer[si]
+mov ah,09h
+int 21h
+mov al,buffer[01]
+mov len,al
+printmsg msg5
+mov dl,len
+add dl,30h
+mov ah,02h
+int 21h
+mov si,02
+mov al,len
+xor ah,ah
+mov di,ax
+mov cl,00
+al : cmp cl,len
+je a4
+mov dl,buffer[si]
+mov dh,buffer[di+1]
+cmp dl,dh
+jnz a2
+inc si
+dec di
+inc cl
+jmp al
+a4 : printmsg msg2
+jmp a3
+a2 : printmsg msg3
+a3 :
+mov ah,4ch
+int 21h
+end
